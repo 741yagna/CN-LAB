@@ -1,0 +1,135 @@
+#include <stdio.h> 
+#define MAX 10 
+#define INF 9999 
+int main() { 
+    int nodes, i, j, k, count = 0; 
+    int distance[MAX][MAX], via[MAX][MAX], updated[MAX][MAX]; 
+    printf("Enter the number of nodes: "); 
+    scanf("%d", &nodes); 
+    printf("Enter the cost/delay adjacency matrix:"); 
+    for(i = 0; i < nodes; i++) { 
+        for(j = 0; j < nodes; j++) { 
+            scanf("%d", &distance[i][j]); 
+            if(i != j && distance[i][j] == 0) distance[i][j] = INF; 
+            via[i][j] = j; 
+        } 
+    } 
+    do { 
+        count = 0; 
+        for(i = 0; i < nodes; i++) { 
+            for(j = 0; j < nodes; j++) { 
+                for(k = 0; k < nodes; k++) { 
+                    if(distance[i][j] > distance[i][k] + distance[k][j]) { 
+                        distance[i][j] = distance[i][k] + distance[k][j]; 
+                        via[i][j] = k; 
+                        count++; 
+                    } 
+                } 
+            } 
+        } 
+    } while(count != 0); 
+    for(i = 0; i < nodes; i++) { 
+        printf("\nRouting table for node %d:\n", i); 
+        printf("Destination\tNext Hop\tTotal Cost\n"); 
+        for(j = 0; j < nodes; j++) { 
+            if (i == j) 
+                printf("%d\t\t-\t\t0\n", j); 
+            else 
+                printf("%d\t\t%d\t\t%d\n", j, via[i][j], distance[i][j]); 
+        } 
+    } 
+    return 0; 
+} 
+ 
+
+op:Enter the number of nodes: 4
+Enter the cost/delay adjacency matrix0 1 2 3 
+4 5 6 7
+8 9 10 11
+12 13 14 15
+
+
+Routing table for node 0:
+Destination	Next Hop	Total Cost
+0		-		0
+1		1		1
+2		2		2
+3		3		3
+
+Routing table for node 1:
+Destination	Next Hop	Total Cost
+0		0		4
+1		-		0
+2		2		6
+3		3		7
+
+Routing table for node 2:
+Destination	Next Hop	Total Cost
+0		0		8
+1		1		9
+2		-		0
+3		3		11
+
+Routing table for node 3:
+Destination	Next Hop	Total Cost
+0		0		12
+1		1		13
+2		2		14
+3		-		0
+
+
+=== Code Execution Successful ===
+
+#include <stdio.h> 
+int main() { 
+    int total_frames; 
+    int frame, ack; 
+    printf("Enter the total number of frames to send: "); 
+    scanf("%d", &total_frames); 
+    frame = 0; 
+    while (frame < total_frames) { 
+        printf("Sender: Sending Frame %d\n", frame); 
+        printf("Receiver: Enter received frame number (or -1 if the frame is lost): "); 
+        int recv; 
+        scanf("%d", &recv); 
+        if (recv == frame) { 
+            printf("Receiver: Frame %d received. Sending ACK %d\n", recv, recv); 
+            ack = recv; 
+        } else { 
+            printf("Receiver: Frame lost or out-of-order. No ACK sent.\n"); 
+            ack = -1; 
+        } 
+        if (ack == frame) { 
+            printf("Sender: ACK %d received. Proceeding to next frame.\n\n", ack); 
+            frame++; 
+        } else { 
+            printf("Sender: No valid ACK received. Retransmitting Frame %d...\n\n", frame); 
+        } 
+    } 
+    printf("All frames sent and acknowledged!\n"); 
+    return 0; 
+}
+
+op:Enter the total number of frames to send: 3
+Sender: Sending Frame 0
+Receiver: Enter received frame number (or -1 if the frame is lost): -1
+Receiver: Frame lost or out-of-order. No ACK sent.
+Sender: No valid ACK received. Retransmitting Frame 0...
+
+Sender: Sending Frame 0
+Receiver: Enter received frame number (or -1 if the frame is lost): 0
+Receiver: Frame 0 received. Sending ACK 0
+Sender: ACK 0 received. Proceeding to next frame.
+
+Sender: Sending Frame 1
+Receiver: Enter received frame number (or -1 if the frame is lost): 1
+Receiver: Frame 1 received. Sending ACK 1
+Sender: ACK 1 received. Proceeding to next frame.
+
+Sender: Sending Frame 2
+Receiver: Enter received frame number (or -1 if the frame is lost): 2
+Receiver: Frame 2 received. Sending ACK 2
+Sender: ACK 2 received. Proceeding to next frame.
+
+All frames sent and acknowledged!
+
