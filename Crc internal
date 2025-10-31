@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+unsigned int compute_crc(const unsigned char *data, int length, unsigned int poly, int width, unsigned int init_val) {
+    unsigned int crc = init_val;
+    int i, j;
+
+    for (i = 0; i < length; i++) {
+        crc ^= (data[i] << (width - 8)); 
+        for (j = 0; j < 8; j++) {
+            if (crc & (1 << (width - 1))) {  
+                crc = ((crc << 1) ^ poly) & ((1 << width) - 1);
+            } else {
+                crc = (crc << 1) & ((1 << width) - 1);
+            }
+        }
+    }
+    return crc & ((1 << width) - 1);
+}
+int main() {
+    char data[256];
+    printf("Enter data: ");
+    fgets(data, sizeof(data), stdin);
+    data[strcspn(data, "\n")] = 0; 
+    int len = strlen(data);
+    const unsigned char *bytes = (unsigned char *)data;
+    unsigned int crc12 = compute_crc(bytes, len, 0x180F, 12, 0);
+    printf("CRC-12 (poly 0x180F): %03X\n", crc12);
+    unsigned int crc16 = compute_crc(bytes, len, 0x8005, 16, 0);
+    printf("CRC-16 (poly 0x8005): %04X\n", crc16);
+    unsigned int crc_ccitt = compute_crc(bytes, len, 0x1021, 16, 0);
+    printf("CRC-CCITT (poly 0x1021): %04X\n", crc_ccitt);
+    return 0;
+}
+
+op:Enter data: 1101011011 
+CRC-12 (poly 0x180F): 94D
+CRC-16 (poly 0x8005): 96D8
+CRC-CCITT (poly 0x1021): 4979
